@@ -1,0 +1,56 @@
+Configutation:
+  name: Default
+
+  Properties:
+    Property:
+      name: log-path
+      value: "log"
+
+  Appenders:
+
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "[%level] %d{yyyy-MM-dd HH:mm:ss.SSS Z} [%t] %c{1} %M - %msg%n"
+
+
+    RollingFile:
+      - name: FileInfoAppender
+        fileName: ${log-path}/info.log
+        filePattern: "log/archive/info.log.%d{yyyy-MM-dd-hh-mm}.gz"
+        PatternLayout:
+          pattern: "[%level] %d{yyyy-MM-dd HH:mm:ss.SSS Z} [%t] %c{1} %M - %msg%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 50 MB
+        DefaultRollOverStrategy:
+          max: 30
+      - name: FileErrorAppender
+        fileName: ${log-path}/error.log
+        filePattern: "log/archive/error.log.%d{yyyy-MM-dd-hh-mm}.gz"
+        PatternLayout:
+          pattern: "[%level] %d{yyyy-MM-dd HH:mm:ss.SSS Z} [%t] %c{1} %M - %msg%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 50 MB
+        DefaultRollOverStrategy:
+          max: 30
+
+  Loggers:
+
+      Root:
+        level: debug
+        AppenderRef:
+          - ref: Console_Appender
+
+      Logger:
+      #TODO
+        - name: my.template
+          level: info
+          additivity: true
+          AppenderRef:
+            - ref: FileInfoAppender
+              level: info
+            - ref: FileErrorAppender
+              level: error

@@ -1,0 +1,31 @@
+#TODO app修改为对应的内容
+server:
+  port: 80
+  context-path: /app
+
+spring:
+  application:
+    name: app
+  profiles:
+    active: dev
+
+app:
+  name: springWeb
+  jwt:
+    secret: 123abc
+    expirationTime: 14*24*60*60
+
+---
+
+spring:
+  profiles: dev
+
+---
+
+spring:
+  profiles: test
+
+---
+
+spring:
+  profiles: prod
