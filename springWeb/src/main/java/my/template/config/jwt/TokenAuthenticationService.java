@@ -1,13 +1,16 @@
-package my.templdate.config.jwt;
+package my.template.config.jwt;
 
 import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.extern.java.Log;
-import my.templdate.model.common.ApiResult;
+import lombok.extern.slf4j.Slf4j;
+import my.template.config.AppConfig;
+import my.template.model.common.ApiResult;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,21 +25,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@Log
+@Slf4j
+@Configuration
 @ConfigurationProperties(prefix = "app.jwt")
 public class TokenAuthenticationService {
 
     static private final String TOKEN_PREFIX = "Bearer";        // Token前缀
     static public final String HEADER_STRING = "Authorization";// 存放Token的Header Key
 
-    private Long expirationTime;
-    private String secret;
+    @Autowired
+    private AppConfig appConfig;
 
 
     public JWTTokenInfo genTokenInfo(String username, Authentication auth){
         //jwt的长度是有限制的
         List<String> authorities = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-        Date expiration = new Date(System.currentTimeMillis() + expirationTime);
+        Date expiration = new Date(System.currentTimeMillis() + appConfig.getJwt().getExpirationTime());
         // 生成JWT
         String jwt = Jwts.builder()
                 // 保存权限（角色）
@@ -46,7 +50,7 @@ public class TokenAuthenticationService {
                 // 有效期设置
                 .setExpiration(expiration)
                 // 签名设置
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(SignatureAlgorithm.HS512, appConfig.getJwt().getSecret())
                 .compact();
         return new JWTTokenInfo(jwt, expiration.getTime());
     }
@@ -61,7 +65,7 @@ public class TokenAuthenticationService {
             response.setStatus(HttpServletResponse.SC_OK);
             response.getOutputStream().println(new Gson().toJson(result));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("reply login:" + e.getMessage());
         }
     }
 
@@ -87,7 +91,7 @@ public class TokenAuthenticationService {
     private Authentication getAuth(String token){
         Claims claims = Jwts.parser()
                 // 验签
-                .setSigningKey(secret)
+                .setSigningKey(appConfig.getJwt().getSecret())
                 // 去掉 Bearer
                 .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
                 .getBody();

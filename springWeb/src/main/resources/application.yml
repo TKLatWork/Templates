@@ -1,6 +1,6 @@
 #TODO app修改为对应的内容
 server:
-  port: 80
+  port: 8080
   context-path: /app
 
 spring:
@@ -13,7 +13,8 @@ app:
   name: springWeb
   jwt:
     secret: 123abc
-    expirationTime: 14*24*60*60
+    #一天
+    expirationTime: 86400000
 
 ---
 

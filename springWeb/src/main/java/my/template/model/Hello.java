@@ -1,4 +1,4 @@
-package my.templdate.model;
+package my.template.model;
 
 import lombok.Data;
 

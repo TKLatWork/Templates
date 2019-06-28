@@ -1,7 +1,7 @@
-package my.templdate.ctrl;
+package my.template.ctrl;
 
 import lombok.extern.java.Log;
-import my.templdate.model.Hello;
+import my.template.model.Hello;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;

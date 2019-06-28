@@ -1,4 +1,4 @@
-package my.templdate;
+package my.template;
 
 
 import org.springframework.boot.SpringApplication;

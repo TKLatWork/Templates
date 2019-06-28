@@ -1,4 +1,4 @@
-package my.templdate.model.common;
+package my.template.model.common;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

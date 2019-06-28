@@ -1,4 +1,4 @@
-package my.templdate.config;
+package my.template.config;
 
 import org.apache.commons.lang3.builder.RecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;

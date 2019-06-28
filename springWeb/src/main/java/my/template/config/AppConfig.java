@@ -1,6 +1,7 @@
-package my.templdate.config;
+package my.template.config;
 
 import lombok.Data;
+import my.template.config.jwt.JwtConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,5 +11,6 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
 
     private String name;
+    private JwtConfig jwt;
 
 }
