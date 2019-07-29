@@ -12,6 +12,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+/**
+ * 注册一个filter，根据JWT信息来装配authContext
+ */
 @Component
 public class JWTAuthenticationFilter extends GenericFilterBean {
 

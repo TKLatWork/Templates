@@ -36,7 +36,6 @@ public class TokenAuthenticationService {
     @Autowired
     private AppConfig appConfig;
 
-
     public JWTTokenInfo genTokenInfo(String username, Authentication auth){
         //jwt的长度是有限制的
         List<String> authorities = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
@@ -69,7 +68,7 @@ public class TokenAuthenticationService {
         }
     }
 
-    // JWT验证方法
+    // 尝试从JWT信息生成auth对象
     public Authentication getAuthentication(HttpServletRequest request) {
         // 从Header中拿到token
         String token = request.getHeader(HEADER_STRING);
@@ -77,32 +76,29 @@ public class TokenAuthenticationService {
         if(StringUtils.isBlank(token)){
             token = request.getParameter(HEADER_STRING);
         }
-        Authentication authentication = null;
-        if (token != null) {
-            try {
-                authentication = getAuth(token);
-            }catch (Exception e){
-                log.info("JWT Token:" + token + "," + e.getMessage());
-            }
-        }
-        return authentication;
+        return genAuthWithJwtToken(token);
     }
 
-    private Authentication getAuth(String token){
-        Claims claims = Jwts.parser()
-                // 验签
-                .setSigningKey(appConfig.getJwt().getSecret())
-                // 去掉 Bearer
-                .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
-                .getBody();
-        String user = claims.getSubject();
-        // 得到 权限（角色）
-        List<GrantedAuthority> authorities =  AuthorityUtils.commaSeparatedStringToAuthorityList((String) claims.get("authorities"));
+    private Authentication genAuthWithJwtToken(String token){
         UsernamePasswordAuthenticationToken authenticationToken = null;
-        if(user != null){
-            authenticationToken = new UsernamePasswordAuthenticationToken(user, null, authorities);
-            //可以在这里把用户身份丢进去
-            //authenticationToken.setDetails(AccountDataUtilFactory.getByAccountName(user));
+        try {
+            Claims claims = Jwts.parser()
+                    // 验签
+                    .setSigningKey(appConfig.getJwt().getSecret())
+                    // 去掉 Bearer
+                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+                    .getBody();
+            String user = claims.getSubject();
+            // 得到 权限（角色）
+            List<GrantedAuthority> authorities =  AuthorityUtils.commaSeparatedStringToAuthorityList((String) claims.get("authorities"));
+
+            if(user != null){
+                authenticationToken = new UsernamePasswordAuthenticationToken(user, null, authorities);
+                //可以在这里把用户身份丢进去
+                //authenticationToken.setDetails(AccountDataUtilFactory.getByAccountName(user));
+            }
+        }catch (Exception e){
+            log.warn("Gen Auth For jwtToken Fail:" + e.getMessage(), e);
         }
         return authenticationToken;
     }

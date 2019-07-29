@@ -1,0 +1,1 @@
+docker run --rm -v ${PWD}/mount:/mount bobrik/curator:5.5.1 --config /mount/curator.yml /mount/deleteLogs.yml

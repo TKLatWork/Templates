@@ -1,0 +1,15 @@
+filebeat:
+  prospectors:
+    - input_type: log
+      paths:
+        #日志文件地址
+        - '/var/lib/docker/containers/*/*.log'
+      json.message_key: log
+      json.keys_under_root: true
+      #只有6.0+的版本有这个
+      processors:
+       - add_docker_metadata: ~
+  registry_file: /etc/registry/mark # 记录日志读取位置，防止重启后重复读取
+output:
+  logstash:
+      hosts: ["192.168.200.106:5044"] #填写logstash的访问IP

@@ -1,0 +1,75 @@
+version: '3'
+#docker stack
+services:
+
+  mongodb:
+    image: 'bitnami/mongodb:3.7.5-r0'
+    restart: always
+    environment:
+      - MONGODB_DATABASE=db
+      - MONGODB_USERNAME=admin
+      - MONGODB_PASSWORD=123
+      - MONGODB_ADVERTISED_HOSTNAME=192.168.200.212
+    ports:
+      - "27017:27017"
+    volumes:
+      - 'mongodb_data:/bitnami'
+
+  redis:
+    image: 'bitnami/redis:latest'
+    restart: always
+    ports:
+      - '6379:6379'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+
+  redis-sentinel:
+    image: 'bitnami/redis-sentinel:latest'
+    restart: always
+    ports:
+      - "26379:26379"
+    environment:
+      - REDIS_MASTER_HOST=192.168.200.212
+    volumes:
+      - 'redis_sentinel_data:/bitnami'
+
+  rabbitmq:
+    image: 'bitnami/rabbitmq'
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - 'rabbitmq_data:/bitnami'
+
+  consul:
+    image: bitnami/consul
+    restart: always
+    environment:
+      - CONSUL_BOOTSTRAP_EXPECT=1
+      - CONSUL_CLIENT_LAN_ADDRESS=0.0.0.0
+      - CONSUL_DISABLE_KEYRING_FILE=true
+      - CONSUL_RETRY_JOIN=consul
+    ports:
+      - '8300:8300'
+      - '8301:8301'
+      - '8301:8301/udp'
+      - '8500:8500'
+      - '8600:8600'
+      - '8600:8600/udp'
+    volumes:
+      - 'consul_data:/bitnami'
+
+volumes:
+  consul_data:
+    driver: local
+  redis_data:
+    driver: local
+  mongodb_data:
+    driver: local
+  redis_sentinel_data:
+    driver: local
+  rabbitmq_data:
+    driver: local

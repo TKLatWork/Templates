@@ -20,10 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Type;
 
 import static my.template.config.auth.MyUserDetailsService.ADMIN;
-import static my.template.config.auth.MyUserDetailsService.PWD;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(SpringRunner.class)

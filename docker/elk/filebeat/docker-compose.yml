@@ -1,0 +1,21 @@
+version: '2'
+services:
+  filebeat:
+    image: prima/filebeat
+    container_name: filebeat 
+    restart: always
+    network_mode: "bridge"
+    volumes:
+      - ./conf/filebeat.yml:/filebeat.yml
+      - filebeat_data:/etc/registry #进度记录
+      - /var/lib/docker/containers/:/var/lib/docker/containers/ #6.0+的版本才支持**
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: "json-file"
+      options:
+          max-size: "50m"
+          max-file: "20"
+
+volumes:
+  filebeat_data:
+    driver: local
